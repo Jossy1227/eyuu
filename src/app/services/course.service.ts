@@ -4,7 +4,7 @@ import { map } from "rxjs/operators";
 import { FormBuilder } from "@angular/forms";
 import id from "@angular/common/locales/extra/id";
 import { PagedResponse, Course, CourseDetail } from "../models/course.model";
-
+import { environment } from '../../environments/environment';
 // @Service() means Angular creates one instance of this service
 // and shares it across the entire app. This is the Angular 22 shorthan
 //d replacinglegacy @Injectable.
@@ -13,15 +13,14 @@ import { PagedResponse, Course, CourseDetail } from "../models/course.model";
 export class CourseService {
     // inject(HttpClient) requests Angular's HTTP client the same pattern as inject(FormBuilder)
     private http = inject(HttpClient);
-    private baseUrl = "https://localhost:5001/api/courses";
+    private readonly base = `${environment.apiUrl}/courses`;
+    private baseUrl = environment.apiUrl + "/courses";
     getAll(page = 1, pageSize = 50) {
         // This URL is GET /api/courses → map items[] (M6 catalogue envelope). Never accept a bare root [...].
         // Switch to map((p) => p.data) if your base URL is GET /api/v2/courses; paging often nests under meta on that envelope (Step 1).
         return this.http
-            .get<PagedResponse<Course>>(this.baseUrl, {
-                params: {
-                    page: page.toString(), pageSize: pageSize.toString()
-                },
+            .get<PagedResponse<Course>>(this.base, {
+                params: { page: '1', pageSize: '50' }
 
             })
             .pipe(map((p) => p.items));
